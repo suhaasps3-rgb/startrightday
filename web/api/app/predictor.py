@@ -97,7 +97,7 @@ async def generate_recommendation(
     # ------------------------------------------------------------------
     slots = generate_slots(
         sunrise=day["sunrise"],
-        sunset=day["sunset"],
+        end_time=day["next_sunrise"],
         nakshatra_at_birth=birth_nakshatra_idx,
     )
 

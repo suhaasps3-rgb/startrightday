@@ -27,15 +27,15 @@ _SLOT_DELTA = timedelta(minutes=SLOT_DURATION_MINUTES)
 
 def generate_slots(
     sunrise: datetime,
-    sunset: datetime,
+    end_time: datetime,
     nakshatra_at_birth: int,
 ) -> List[SlotPanchang]:
     """
-    Generate all 15-minute candidate slots between sunrise and sunset.
+    Generate all 15-minute candidate slots between sunrise and end_time.
 
     Args:
         sunrise:             Timezone-aware sunrise datetime.
-        sunset:              Timezone-aware sunset datetime.
+        end_time:            Timezone-aware end datetime (e.g. next sunrise).
         nakshatra_at_birth:  0-based birth Nakshatra index for Tarabalam.
 
     Returns:
@@ -44,7 +44,7 @@ def generate_slots(
     slots: List[SlotPanchang] = []
     slot_start = sunrise
 
-    while slot_start + _SLOT_DELTA <= sunset:
+    while slot_start + _SLOT_DELTA <= end_time:
         slot_end = slot_start + _SLOT_DELTA
         midpoint = slot_start + _HALF_SLOT
 

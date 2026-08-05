@@ -108,6 +108,7 @@ def get_day_boundaries(
     All values are timezone-aware datetime objects.
     """
     sunrise, sunset = get_sunrise_sunset(lat, lng, activity_date, timezone)
+    next_sunrise, _ = get_sunrise_sunset(lat, lng, activity_date + timedelta(days=1), timezone)
     day_duration = sunset - sunrise
 
     # Python's datetime.weekday(): Monday=0, Sunday=6
@@ -126,6 +127,7 @@ def get_day_boundaries(
     return {
         "sunrise": sunrise,
         "sunset": sunset,
+        "next_sunrise": next_sunrise,
         "rahu_start": rahu_start,
         "rahu_end": rahu_end,
         "yamaganda_start": yamaganda_start,

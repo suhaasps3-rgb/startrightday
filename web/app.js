@@ -231,11 +231,11 @@ function populateTimeDropdowns() {
   ampmSel.addEventListener('change', updateHiddenTime);
 }
 
-function setupAutocomplete(prefix) {
-  const input = document.getElementById(`inp-${prefix}`);
-  const dropdown = document.getElementById(`${prefix}-dropdown`);
-  const latInput = document.getElementById(`inp-${prefix}-lat`);
-  const lonInput = document.getElementById(`inp-${prefix}-lon`);
+function setupAutocomplete(inputId, latId, lonId, dropdownId) {
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  const latInput = document.getElementById(latId);
+  const lonInput = document.getElementById(lonId);
   if (!input || !dropdown || !latInput || !lonInput) return;
   
   let timeout = null;
@@ -288,8 +288,8 @@ function setupAutocomplete(prefix) {
 }
 
 function initAutocomplete() {
-  setupAutocomplete('place');
-  setupAutocomplete('activity-place');
+  setupAutocomplete('inp-place', 'inp-place-lat', 'inp-place-lon', 'place-dropdown');
+  setupAutocomplete('inp-activity-place', 'inp-activity-lat', 'inp-activity-lon', 'activity-place-dropdown');
 }
 
 const NAKSHATRAS = [

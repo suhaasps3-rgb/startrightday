@@ -721,12 +721,14 @@ function renderResult(data) {
 
   if (data.intervals && data.intervals.length > 0) {
     emptyState.classList.add('hidden');
+    emptyState.style.display = 'none';
     data.intervals.forEach((iv, i) => {
       const card = buildCard(iv, i);
       cardsList.appendChild(card);
     });
   } else {
     emptyState.classList.remove('hidden');
+    emptyState.style.display = 'flex';
     emptyState.querySelector('.empty-icon').textContent = '🌙';
     emptyState.querySelector('.empty-title').textContent = 'No Auspicious Time Found';
     document.getElementById('empty-body').textContent =
@@ -755,6 +757,7 @@ function renderError(msg) {
   document.getElementById('result-date').textContent = '';
 
   emptyState.classList.remove('hidden');
+  emptyState.style.display = 'flex';
   emptyState.querySelector('.empty-icon').textContent = '⚠️';
   emptyState.querySelector('.empty-title').textContent = 'Could not connect';
   document.getElementById('empty-body').textContent = msg || 'Please check your connection and try again.';

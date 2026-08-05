@@ -401,7 +401,12 @@ async function handleFormSubmit(e) {
   startLoadingMessages();
 
   try {
-    const result = await api.recommend(payload);
+    // Artificial delay to allow loading animation to play (min 3 seconds)
+    const [result] = await Promise.all([
+      api.recommend(payload),
+      new Promise(res => setTimeout(res, 3000))
+    ]);
+    
     stopLoadingMessages();
     renderResult(result);
     goTo('result');

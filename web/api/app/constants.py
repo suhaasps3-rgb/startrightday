@@ -233,4 +233,4 @@ TARA_ACTIVITY_MAP: Dict[int, List[str]] = {
 # ---------------------------------------------------------------------------
 # Slot configuration
 # ---------------------------------------------------------------------------
-SLOT_DURATION_MINUTES: int = 15  # Granularity of candidate time slots
+SLOT_DURATION_MINUTES: int = 1  # Granularity of candidate time slots

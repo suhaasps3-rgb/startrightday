@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StartRightDay — Know the Best Time to Start</title>
+  <meta name="description" content="Find the most auspicious time to begin your next important activity using classical Vedic Panchang principles." />
+  <meta name="theme-color" content="#0F172A" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SPLASH
+  ═══════════════════════════════════════════════════════ -->
+  <div id="screen-splash" class="screen screen--dark active">
+    <div class="splash-content">
+      <div class="splash-logo" id="splash-logo">
+        <span class="splash-icon">☀</span>
+      </div>
+      <h1 class="splash-title" id="splash-title">StartRightDay</h1>
+      <p class="splash-tagline" id="splash-tagline">Know the Best Time to Start</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       ONBOARDING
+  ═══════════════════════════════════════════════════════ -->
+  <div id="screen-onboarding" class="screen">
+    <div class="onboarding-wrap">
+      <button class="skip-btn" id="ob-skip">Skip</button>
+
+      <div class="slides-container" id="slides-container">
+
+        <div class="slide active" data-slide="0">
+          <div class="slide-icon-wrap" style="background:#EEF2FF">
+            <span class="slide-icon">🕐</span>
+          </div>
+          <h2 class="slide-title">Timing Is<br>Everything</h2>
+          <p class="slide-body">Starting at the right moment increases your chances of success. Classical Indian timekeeping has studied this for centuries.</p>
+        </div>
+
+        <div class="slide" data-slide="1">
+          <div class="slide-icon-wrap" style="background:#F0FDF4">
+            <span class="slide-icon">📋</span>
+          </div>
+          <h2 class="slide-title">Enter Your<br>Details Once</h2>
+          <p class="slide-body">Just your birth place, date, and time. We use this to calculate the most aligned windows for your activities.</p>
+        </div>
+
+        <div class="slide" data-slide="2">
+          <div class="slide-icon-wrap" style="background:#FFFBEB">
+            <span class="slide-icon">✅</span>
+          </div>
+          <h2 class="slide-title">Get Clear<br>Recommendations</h2>
+          <p class="slide-body">No scores. No predictions. Just simple, rule-based guidance — the best time to begin, and why.</p>
+        </div>
+
+      </div>
+
+      <div class="ob-bottom">
+        <div class="dots" id="ob-dots">
+          <span class="dot active" data-dot="0"></span>
+          <span class="dot" data-dot="1"></span>
+          <span class="dot" data-dot="2"></span>
+        </div>
+        <button class="btn-primary" id="ob-next">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HOME
+  ═══════════════════════════════════════════════════════ -->
+  <div id="screen-home" class="screen">
+    <div class="home-wrap">
+      <div class="home-scroll">
+
+        <!-- Header -->
+        <div class="home-header">
+          <div class="home-badge">PANCHANG TIMING</div>
+          <h1 class="home-title">When should<br>you begin?</h1>
+          <p class="home-subtitle">Enter your details to find the most aligned time for your activity.</p>
+        </div>
+
+        <!-- Form -->
+        <form id="home-form" class="form" novalidate>
+
+          <div class="field-group" id="fg-place">
+            <label class="field-label" for="inp-place">Birth Place</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <input type="text" id="inp-place" class="field-input" placeholder="e.g. Mumbai, India" autocomplete="off" />
+            </div>
+            <span class="field-error" id="err-place"></span>
+          </div>
+
+          <div class="field-group" id="fg-bdate">
+            <label class="field-label" for="inp-bdate">Birth Date</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </span>
+              <input type="date" id="inp-bdate" class="field-input field-input--date" />
+            </div>
+            <span class="field-error" id="err-bdate"></span>
+          </div>
+
+          <div class="field-group" id="fg-btime">
+            <label class="field-label" for="inp-btime">Birth Time</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <input type="time" id="inp-btime" class="field-input field-input--time" />
+            </div>
+            <span class="field-error" id="err-btime"></span>
+          </div>
+
+          <div class="field-group" id="fg-adate">
+            <label class="field-label" for="inp-adate">Activity Date</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </span>
+              <input type="date" id="inp-adate" class="field-input field-input--date" />
+            </div>
+            <span class="field-error" id="err-adate"></span>
+          </div>
+
+          <button type="submit" class="btn-primary btn-primary--full" id="submit-btn">
+            <span id="submit-label">Check Best Time</span>
+            <svg id="submit-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+
+          <p class="form-caption">Based on classical Vedic Panchang principles</p>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LOADING
+  ═══════════════════════════════════════════════════════ -->
+  <div id="screen-loading" class="screen">
+    <div class="loading-wrap">
+      <!-- SVG Arc Loader -->
+      <div class="arc-container">
+        <svg class="arc-svg" viewBox="0 0 80 80">
+          <defs>
+            <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366F1"/>
+              <stop offset="60%" stop-color="#818CF8"/>
+              <stop offset="100%" stop-color="#EEF2FF" stop-opacity="0.3"/>
+            </linearGradient>
+          </defs>
+          <circle cx="40" cy="40" r="32" class="arc-track"/>
+          <circle cx="40" cy="40" r="32" class="arc-fill" stroke="url(#arcGrad)"/>
+        </svg>
+      </div>
+
+      <p class="loading-app-name">StartRightDay</p>
+      <p class="loading-msg" id="loading-msg">Calculating Panchang...</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       RESULT
+  ═══════════════════════════════════════════════════════ -->
+  <div id="screen-result" class="screen">
+    <div class="result-wrap">
+
+      <!-- Top bar -->
+      <div class="result-topbar">
+        <button class="back-btn" id="result-back">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <span class="result-brand">StartRightDay</span>
+      </div>
+
+      <!-- Status banner -->
+      <div class="status-banner" id="status-banner">
+        <div class="status-icon" id="status-icon"></div>
+        <div class="status-text-wrap">
+          <div class="status-label" id="status-label"></div>
+          <div class="status-sub" id="status-sub"></div>
+        </div>
+      </div>
+
+      <!-- Date -->
+      <p class="result-date" id="result-date"></p>
+
+      <!-- Cards -->
+      <div class="cards-list" id="cards-list"></div>
+
+      <!-- Empty state -->
+      <div class="empty-state hidden" id="empty-state">
+        <div class="empty-icon">🌙</div>
+        <h3 class="empty-title">No Auspicious Time Found</h3>
+        <p class="empty-body" id="empty-body"></p>
+      </div>
+
+      <!-- CTA -->
+      <div class="result-cta">
+        <button class="btn-primary btn-primary--full" id="result-retry">Check Another Date</button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script src="app.js"></script>
+</body>
+</html>

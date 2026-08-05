@@ -225,19 +225,19 @@ a { text-decoration: none; color: inherit; }
   position: absolute;
   background: var(--accent);
   border-radius: 50%;
-  opacity: 0.15;
+  opacity: 0.25;
   animation: twinkle var(--duration) ease-in-out infinite alternate;
 }
 
 @keyframes twinkle {
-  0% { opacity: 0.05; transform: scale(0.8); }
-  100% { opacity: 0.3; transform: scale(1.2); }
+  0% { opacity: 0.1; transform: scale(0.8); }
+  100% { opacity: 0.5; transform: scale(1.2); }
 }
 
 .star-shape {
   position: absolute;
   background: var(--warning); 
-  opacity: 0.15;
+  opacity: 0.35;
   clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
   animation: float var(--duration) ease-in-out infinite alternate;
 }
@@ -254,7 +254,7 @@ a { text-decoration: none; color: inherit; }
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  box-shadow: inset 15px 0 0 0 rgba(99, 102, 241, 0.05);
+  box-shadow: inset 15px 0 0 0 rgba(99, 102, 241, 0.12);
   animation: float 10s ease-in-out infinite alternate;
 }
 

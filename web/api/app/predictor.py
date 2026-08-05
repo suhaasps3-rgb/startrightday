@@ -64,22 +64,13 @@ async def generate_recommendation(
     """
 
     # ------------------------------------------------------------------
-    # Step 1: Geocode birth place or use provided coordinates
+    # Step 1: Handle Birth Location (only for Timezone if calculating star)
     # ------------------------------------------------------------------
-    if request.lat is not None and request.lon is not None:
-        # If coordinates are provided (via autocomplete), we bypass the slow geocoding API
-        # Since our autocomplete DB only contains Indian places, timezone is always IST
-        from app.models import GeoLocation
-        geo = GeoLocation(
-            place_name=request.birth_place,
-            latitude=request.lat,
-            longitude=request.lon,
-            timezone="Asia/Kolkata"
-        )
-    else:
-        geo = await geocode_place(request.birth_place)
-        
-    tz = pytz.timezone(geo.timezone)
+    # We no longer geocode birth_place for lat/lon, because we assume "Asia/Kolkata" for birth.
+    # The activity location is what matters for the daily panchang.
+    
+    # We still need the birth timezone to localize birth date/time
+    tz = pytz.timezone("Asia/Kolkata")
 
     # Import here to avoid circular dependency
     from app.constants import NAKSHATRA_NAMES
@@ -105,11 +96,12 @@ async def generate_recommendation(
     # ------------------------------------------------------------------
     # Step 3: Compute day boundaries for activity date
     # ------------------------------------------------------------------
+    # We use the explicitly provided activity location
     day = get_day_boundaries(
-        lat=geo.latitude,
-        lng=geo.longitude,
+        lat=request.activity_lat,
+        lng=request.activity_lon,
         activity_date=request.activity_date,
-        timezone=geo.timezone,
+        timezone="Asia/Kolkata",
     )
 
     # ------------------------------------------------------------------

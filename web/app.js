@@ -231,11 +231,13 @@ function populateTimeDropdowns() {
   ampmSel.addEventListener('change', updateHiddenTime);
 }
 
-function initAutocomplete() {
-  const input = document.getElementById('inp-place');
-  const dropdown = document.getElementById('place-dropdown');
-  const latInput = document.getElementById('inp-place-lat');
-  const lonInput = document.getElementById('inp-place-lon');
+function setupAutocomplete(prefix) {
+  const input = document.getElementById(`inp-${prefix}`);
+  const dropdown = document.getElementById(`${prefix}-dropdown`);
+  const latInput = document.getElementById(`inp-${prefix}-lat`);
+  const lonInput = document.getElementById(`inp-${prefix}-lon`);
+  if (!input || !dropdown || !latInput || !lonInput) return;
+  
   let timeout = null;
 
   input.addEventListener('input', (e) => {
@@ -285,6 +287,11 @@ function initAutocomplete() {
   });
 }
 
+function initAutocomplete() {
+  setupAutocomplete('place');
+  setupAutocomplete('activity-place');
+}
+
 const NAKSHATRAS = [
   "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra",
   "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni",
@@ -307,7 +314,7 @@ function populateNakshatras() {
 function initModeToggle() {
   const btnCalc = document.getElementById('mode-calc');
   const btnKnown = document.getElementById('mode-known');
-  const fgPlaceLabel = document.getElementById('label-place');
+  const fgPlace = document.getElementById('fg-place');
   const fgNakshatra = document.getElementById('fg-nakshatra');
   const fgBdate = document.getElementById('fg-bdate');
   const fgBtime = document.getElementById('fg-btime');
@@ -319,7 +326,10 @@ function initModeToggle() {
     btnCalc.classList.add('active');
     btnKnown.classList.remove('active');
     
-    if (fgPlaceLabel) fgPlaceLabel.textContent = 'Birth Place';
+    if (fgPlace) {
+      fgPlace.classList.remove('hidden');
+      fgPlace.style.display = 'flex';
+    }
     if (fgNakshatra) {
       fgNakshatra.classList.add('hidden');
       fgNakshatra.style.display = 'none';
@@ -343,7 +353,10 @@ function initModeToggle() {
     btnKnown.classList.add('active');
     btnCalc.classList.remove('active');
     
-    if (fgPlaceLabel) fgPlaceLabel.textContent = 'Current Location';
+    if (fgPlace) {
+      fgPlace.classList.add('hidden');
+      fgPlace.style.display = 'none';
+    }
     if (fgNakshatra) {
       fgNakshatra.classList.remove('hidden');
       fgNakshatra.style.display = 'flex';
@@ -470,6 +483,16 @@ function populateFormFromData(data) {
     document.getElementById('inp-place-lon').value = data.lon;
   }
   
+  if (data.activity_place && data.activity_lat) {
+    document.getElementById('inp-activity-place').value = data.activity_place;
+    document.getElementById('inp-activity-lat').value = data.activity_lat;
+    document.getElementById('inp-activity-lon').value = data.activity_lon;
+  }
+  
+  if (data.known_nakshatra) {
+    document.getElementById('inp-nakshatra').value = data.known_nakshatra;
+  }
+  
   if (data.birth_date) {
     document.getElementById('inp-bdate').value = data.birth_date;
     const parts = data.birth_date.split('-');
@@ -530,7 +553,7 @@ function formatDateISO(d) {
 }
 
 function clearErrors() {
-  ['place', 'bdate', 'btime', 'adate', 'nakshatra'].forEach(k => {
+  ['place', 'activity-place', 'bdate', 'btime', 'adate', 'nakshatra'].forEach(k => {
     const fg = document.getElementById(`fg-${k}`);
     const err = document.getElementById(`err-${k}`);
     if (fg) fg.classList.remove('has-error');
@@ -550,20 +573,25 @@ function validate() {
   let ok = true;
   const place = document.getElementById('inp-place').value.trim();
   const lat = document.getElementById('inp-place-lat').value;
+  const actPlace = document.getElementById('inp-activity-place').value.trim();
+  const actLat = document.getElementById('inp-activity-lat').value;
   const bdate = document.getElementById('inp-bdate').value;
   const btime = document.getElementById('inp-btime').value;
   const adate = document.getElementById('inp-adate').value;
   const nakshatra = document.getElementById('inp-nakshatra').value;
 
-  if (!place) { showError('place', 'Please enter a location'); ok = false; }
-  else if (!lat) { showError('place', 'Please select a place from the dropdown'); ok = false; }
-  
   if (state.mode !== 'known') {
+    if (!place) { showError('place', 'Please enter birth place'); ok = false; }
+    else if (!lat) { showError('place', 'Please select a place from the dropdown'); ok = false; }
+    
     if (!bdate) { showError('bdate', 'Please select birth date'); ok = false; }
     if (!btime) { showError('btime', 'Please select birth time'); ok = false; }
   } else {
     if (!nakshatra) { showError('nakshatra', 'Please select your birth star'); ok = false; }
   }
+  
+  if (!actPlace) { showError('activity-place', 'Please enter current location'); ok = false; }
+  else if (!actLat) { showError('activity-place', 'Please select a place from the dropdown'); ok = false; }
   
   if (!adate) { showError('adate', 'Please select activity date'); ok = false; }
   
@@ -582,26 +610,30 @@ async function handleFormSubmit(e) {
   if (!validate()) return;
 
   const payload = {
-    birth_place: document.getElementById('inp-place').value.trim(),
     activity_date: document.getElementById('inp-adate').value,
-    lat: parseFloat(document.getElementById('inp-place-lat').value),
-    lon: parseFloat(document.getElementById('inp-place-lon').value)
+    activity_lat: parseFloat(document.getElementById('inp-activity-lat').value),
+    activity_lon: parseFloat(document.getElementById('inp-activity-lon').value)
   };
   
   if (state.mode !== 'known') {
+    payload.birth_place = document.getElementById('inp-place').value.trim();
     payload.birth_date = document.getElementById('inp-bdate').value;
     payload.birth_time = document.getElementById('inp-btime').value;
   } else {
     payload.known_nakshatra = document.getElementById('inp-nakshatra').value;
   }
 
-  // Save birth details transiently
+  // Save transient data so form persists on reload
   storage.saveTransient({
-    birth_place: payload.birth_place,
-    birth_date:  payload.birth_date,
-    birth_time:  payload.birth_time,
-    lat: payload.lat,
-    lon: payload.lon
+    birth_place: document.getElementById('inp-place').value.trim(),
+    lat: document.getElementById('inp-place-lat').value,
+    lon: document.getElementById('inp-place-lon').value,
+    birth_date: document.getElementById('inp-bdate').value,
+    birth_time: document.getElementById('inp-btime').value,
+    activity_place: document.getElementById('inp-activity-place').value.trim(),
+    activity_lat: document.getElementById('inp-activity-lat').value,
+    activity_lon: document.getElementById('inp-activity-lon').value,
+    known_nakshatra: document.getElementById('inp-nakshatra').value
   });
 
   // Navigate to loading

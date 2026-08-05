@@ -23,8 +23,8 @@ class RecommendationRequest(BaseModel):
     birth_place is a human-readable city/town name resolved via OSM geocoding.
     """
 
-    birth_place: str = Field(
-        ...,
+    birth_place: Optional[str] = Field(
+        default=None,
         min_length=2,
         max_length=100,
         description="City or town name of birth place (e.g., 'Mumbai', 'New Delhi')",
@@ -45,13 +45,13 @@ class RecommendationRequest(BaseModel):
         ...,
         description="Date for which to find auspicious intervals (YYYY-MM-DD)",
     )
-    lat: Optional[float] = Field(
-        default=None,
-        description="Latitude of the birth place (optional if geocoding fallback is used)",
+    activity_lat: float = Field(
+        ...,
+        description="Latitude of the activity location",
     )
-    lon: Optional[float] = Field(
-        default=None,
-        description="Longitude of the birth place (optional if geocoding fallback is used)",
+    activity_lon: float = Field(
+        ...,
+        description="Longitude of the activity location",
     )
 
     @field_validator("birth_place")

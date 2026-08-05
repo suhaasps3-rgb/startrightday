@@ -163,6 +163,20 @@
             <span class="field-error" id="err-btime"></span>
           </div>
 
+          <div class="field-group" id="fg-activity-place">
+            <label class="field-label" for="inp-activity-place">Activity Location (Current City)</label>
+            <div class="input-wrap autocomplete-wrap">
+              <span class="input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <input type="text" id="inp-activity-place" class="field-input" placeholder="e.g. New York" autocomplete="off" />
+              <input type="hidden" id="inp-activity-lat" />
+              <input type="hidden" id="inp-activity-lon" />
+              <div class="autocomplete-dropdown hidden" id="activity-place-dropdown"></div>
+            </div>
+            <span class="field-error" id="err-activity-place"></span>
+          </div>
+
           <!-- Save Profile Action -->
           <div class="save-profile-wrap" id="save-profile-wrap">
             <button type="button" class="btn-save-profile" id="btn-save-profile">

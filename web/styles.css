@@ -354,6 +354,7 @@ html[data-theme="dark"] .icon-sun {
   color: var(--text-primary);
   letter-spacing: -1.2px;
   line-height: 1.15;
+  margin-bottom: 16px;
 }
 
 .home-subtitle {

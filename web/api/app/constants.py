@@ -83,19 +83,17 @@ TITHI_NAMES: List[str] = [
 TITHI_SPAN_DEG: float = 12.0  # Each Tithi = 12° of Moon-Sun elongation
 
 # Tithi classifications (0-indexed)
-# Rikta = inauspicious for most activities
-RIKTA_TITHIS: FrozenSet[int] = frozenset({3, 7, 11, 18, 22, 26})  # Chaturthi (×2), Ashtami (×2), Dwadashi (×2)
+# Rikta = inauspicious for most activities (Chaturthi, Navami, Chaturdashi)
+RIKTA_TITHIS: FrozenSet[int] = frozenset({3, 8, 13, 18, 23, 28})  # Chaturthi, Navami, Chaturdashi
 
 # Absolutely inauspicious Tithis — rejected outright
 BAD_TITHIS: FrozenSet[int] = frozenset({
     3,   # Chaturthi (Shukla)
-    7,   # Ashtami (Shukla)
-    11,  # Dwadashi (Shukla) — debated; included conservatively
+    8,   # Navami (Shukla)
     13,  # Chaturdashi (Shukla)
     14,  # Purnima — fine for worship, not for new beginnings in many traditions
     18,  # Chaturthi (Krishna)
-    22,  # Ashtami (Krishna)
-    26,  # Dwadashi (Krishna)
+    23,  # Navami (Krishna)
     28,  # Chaturdashi (Krishna)
     29,  # Amavasya
 })

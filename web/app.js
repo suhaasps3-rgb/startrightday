@@ -172,8 +172,49 @@ function populateDateDropdowns() {
   yearSel.addEventListener('change', updateHiddenDate);
 }
 
+function populateTimeDropdowns() {
+  const hrSel = document.getElementById('inp-btime-hr');
+  const minSel = document.getElementById('inp-btime-min');
+  const ampmSel = document.getElementById('inp-btime-ampm');
+  const hidden = document.getElementById('inp-btime');
+  if (!hrSel || !minSel || !ampmSel || !hidden) return;
+
+  for (let i = 1; i <= 12; i++) {
+    const opt = document.createElement('option');
+    opt.value = String(i).padStart(2, '0');
+    opt.textContent = opt.value;
+    hrSel.appendChild(opt);
+  }
+
+  for (let i = 0; i <= 59; i++) {
+    const opt = document.createElement('option');
+    opt.value = String(i).padStart(2, '0');
+    opt.textContent = opt.value;
+    minSel.appendChild(opt);
+  }
+
+  const updateHiddenTime = () => {
+    let h = hrSel.value;
+    const m = minSel.value;
+    const ampm = ampmSel.value;
+    if (h && m && ampm) {
+      let hrInt = parseInt(h, 10);
+      if (ampm === 'PM' && hrInt !== 12) hrInt += 12;
+      if (ampm === 'AM' && hrInt === 12) hrInt = 0;
+      hidden.value = `${String(hrInt).padStart(2, '0')}:${m}`;
+    } else {
+      hidden.value = '';
+    }
+  };
+
+  hrSel.addEventListener('change', updateHiddenTime);
+  minSel.addEventListener('change', updateHiddenTime);
+  ampmSel.addEventListener('change', updateHiddenTime);
+}
+
 function initHome() {
   populateDateDropdowns();
+  populateTimeDropdowns();
   
   // Set activity date default to today
   const today = new Date();
@@ -202,8 +243,28 @@ function hydrateSavedData() {
       if (daySel) daySel.value = parts[2];
     }
   }
-  
-  document.getElementById('inp-btime').value = saved.birth_time || '';
+  if (saved.birth_time) {
+    document.getElementById('inp-btime').value = saved.birth_time;
+    const parts = saved.birth_time.split(':');
+    if (parts.length === 2) {
+      const hrSel = document.getElementById('inp-btime-hr');
+      const minSel = document.getElementById('inp-btime-min');
+      const ampmSel = document.getElementById('inp-btime-ampm');
+      
+      let h = parseInt(parts[0], 10);
+      let ampm = 'AM';
+      if (h >= 12) {
+        ampm = 'PM';
+        if (h > 12) h -= 12;
+      } else if (h === 0) {
+        h = 12;
+      }
+      
+      if (hrSel) hrSel.value = String(h).padStart(2, '0');
+      if (minSel) minSel.value = parts[1];
+      if (ampmSel) ampmSel.value = ampm;
+    }
+  }
 }
 
 function formatDateISO(d) {

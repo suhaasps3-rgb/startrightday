@@ -120,11 +120,20 @@
 
           <div class="field-group" id="fg-btime">
             <label class="field-label" for="inp-btime">Birth Time</label>
-            <div class="input-wrap">
+            <div class="input-wrap input-wrap--date-dropdowns">
               <span class="input-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </span>
-              <input type="time" id="inp-btime" class="field-input field-input--time" />
+              <div class="date-dropdowns">
+                <select id="inp-btime-hr" class="field-input dropdown-select"><option value="">Hour</option></select>
+                <select id="inp-btime-min" class="field-input dropdown-select"><option value="">Min</option></select>
+                <select id="inp-btime-ampm" class="field-input dropdown-select">
+                  <option value="">AM/PM</option>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+              <input type="hidden" id="inp-btime" />
             </div>
             <span class="field-error" id="err-btime"></span>
           </div>

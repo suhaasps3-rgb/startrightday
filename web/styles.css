@@ -750,6 +750,84 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.7;
 }
 
+/* ── Form Inputs ─────────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Profiles Bar ────────────────────────────────────────── */
+.profiles-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 8px; /* space for scrollbar if any */
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+.profiles-scroll-wrap::-webkit-scrollbar { display: none; }
+
+.profiles-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--surface-gray);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.profile-chip.active {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.profile-chip--add {
+  background: transparent;
+  border: 1px dashed var(--text-tertiary);
+  color: var(--text-tertiary);
+}
+
+.save-profile-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.btn-save-profile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+  transition: background 0.2s;
+}
+.btn-save-profile:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+/* ── Form Groups ─────────────────────────────────────────── */
 /* ── Result CTA ──────────────────────────────────────────── */
 .result-cta { padding-top: 24px; }
 

@@ -32,10 +32,27 @@ const state = {
 
 // ─── Storage ────────────────────────────────────────────────────────────────
 const storage = {
-  save(d) {
+  getProfiles() {
+    try { 
+      const p = JSON.parse(localStorage.getItem('srd_profiles')); 
+      return Array.isArray(p) ? p : [];
+    } catch { return []; }
+  },
+  saveProfiles(profiles) {
+    try { localStorage.setItem('srd_profiles', JSON.stringify(profiles)); } catch {}
+  },
+  getActiveProfileId() {
+    return localStorage.getItem('srd_active_profile');
+  },
+  setActiveProfileId(id) {
+    if (id) localStorage.setItem('srd_active_profile', id);
+    else localStorage.removeItem('srd_active_profile');
+  },
+  // Transient save for when user checks time without explicitly saving profile
+  saveTransient(d) {
     try { localStorage.setItem('srd_birth', JSON.stringify(d)); } catch {}
   },
-  load() {
+  loadTransient() {
     try { return JSON.parse(localStorage.getItem('srd_birth')); } catch { return null; }
   },
   isOnboarded() { return localStorage.getItem('srd_onboarded') === 'true'; },
@@ -122,6 +139,7 @@ function setSlide(i) {
 function finishOnboarding() {
   storage.markOnboarded();
   goTo('home');
+  hydrateSavedData();
 }
 
 // ─── Home ────────────────────────────────────────────────────────────────────
@@ -278,38 +296,112 @@ function initHome() {
   ainput.value = todayStr;
 
   document.getElementById('home-form').addEventListener('submit', handleFormSubmit);
+  document.getElementById('btn-save-profile').addEventListener('click', handleSaveProfile);
 }
 
-function hydrateSavedData() {
-  const saved = storage.load();
-  if (!saved) return;
-  document.getElementById('inp-place').value = saved.birth_place || '';
-  if (saved.lat && saved.lon) {
-    document.getElementById('inp-place-lat').value = saved.lat;
-    document.getElementById('inp-place-lon').value = saved.lon;
+// ─── Profiles ───────────────────────────────────────────────────────────────
+function renderProfiles() {
+  const bar = document.getElementById('profiles-bar');
+  if (!bar) return;
+  
+  const profiles = storage.getProfiles();
+  const activeId = storage.getActiveProfileId();
+  
+  bar.innerHTML = '';
+  
+  // Add Profile button
+  const addBtn = document.createElement('div');
+  addBtn.className = 'profile-chip profile-chip--add';
+  addBtn.innerHTML = '<span>+</span> Add Profile';
+  addBtn.addEventListener('click', () => {
+    storage.setActiveProfileId(null);
+    clearFormInputs();
+    renderProfiles();
+  });
+  bar.appendChild(addBtn);
+
+  // Render profiles
+  profiles.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = `profile-chip ${p.id === activeId ? 'active' : ''}`;
+    chip.innerHTML = `<span>👤</span> ${p.name}`;
+    chip.addEventListener('click', () => switchProfile(p.id));
+    bar.appendChild(chip);
+  });
+}
+
+function clearFormInputs() {
+  document.getElementById('inp-place').value = '';
+  document.getElementById('inp-place-lat').value = '';
+  document.getElementById('inp-place-lon').value = '';
+  document.getElementById('inp-bdate').value = '';
+  document.getElementById('inp-btime').value = '';
+  
+  document.getElementById('inp-bdate-day').value = '';
+  document.getElementById('inp-bdate-month').value = '';
+  document.getElementById('inp-bdate-year').value = '';
+  
+  document.getElementById('inp-btime-hr').value = '';
+  document.getElementById('inp-btime-min').value = '';
+  document.getElementById('inp-btime-ampm').value = '';
+}
+
+function switchProfile(id) {
+  const profiles = storage.getProfiles();
+  const p = profiles.find(x => x.id === id);
+  if (!p) return;
+  
+  storage.setActiveProfileId(id);
+  populateFormFromData(p);
+  renderProfiles();
+}
+
+function handleSaveProfile() {
+  if (!validate()) return;
+  
+  const name = prompt("Enter a name for this profile (e.g. 'Me', 'Spouse', 'Rohan'):");
+  if (!name || !name.trim()) return;
+  
+  const payload = {
+    id: 'prof_' + Date.now(),
+    name: name.trim(),
+    birth_place: document.getElementById('inp-place').value.trim(),
+    birth_date:  document.getElementById('inp-bdate').value,
+    birth_time:  document.getElementById('inp-btime').value,
+    lat: parseFloat(document.getElementById('inp-place-lat').value),
+    lon: parseFloat(document.getElementById('inp-place-lon').value)
+  };
+  
+  const profiles = storage.getProfiles();
+  profiles.push(payload);
+  storage.saveProfiles(profiles);
+  storage.setActiveProfileId(payload.id);
+  
+  renderProfiles();
+}
+
+function populateFormFromData(data) {
+  if (!data) return;
+  document.getElementById('inp-place').value = data.birth_place || '';
+  if (data.lat && data.lon) {
+    document.getElementById('inp-place-lat').value = data.lat;
+    document.getElementById('inp-place-lon').value = data.lon;
   }
   
-  if (saved.birth_date) {
-    document.getElementById('inp-bdate').value = saved.birth_date;
-    const parts = saved.birth_date.split('-');
+  if (data.birth_date) {
+    document.getElementById('inp-bdate').value = data.birth_date;
+    const parts = data.birth_date.split('-');
     if (parts.length === 3) {
-      const yearSel = document.getElementById('inp-bdate-year');
-      const monthSel = document.getElementById('inp-bdate-month');
-      const daySel = document.getElementById('inp-bdate-day');
-      
-      if (yearSel) yearSel.value = parts[0];
-      if (monthSel) monthSel.value = parts[1];
-      if (daySel) daySel.value = parts[2];
+      document.getElementById('inp-bdate-year').value = parts[0];
+      document.getElementById('inp-bdate-month').value = parts[1];
+      document.getElementById('inp-bdate-day').value = parts[2];
     }
   }
-  if (saved.birth_time) {
-    document.getElementById('inp-btime').value = saved.birth_time;
-    const parts = saved.birth_time.split(':');
+  
+  if (data.birth_time) {
+    document.getElementById('inp-btime').value = data.birth_time;
+    const parts = data.birth_time.split(':');
     if (parts.length === 2) {
-      const hrSel = document.getElementById('inp-btime-hr');
-      const minSel = document.getElementById('inp-btime-min');
-      const ampmSel = document.getElementById('inp-btime-ampm');
-      
       let h = parseInt(parts[0], 10);
       let ampm = 'AM';
       if (h >= 12) {
@@ -318,10 +410,32 @@ function hydrateSavedData() {
       } else if (h === 0) {
         h = 12;
       }
-      
-      if (hrSel) hrSel.value = String(h).padStart(2, '0');
-      if (minSel) minSel.value = parts[1];
-      if (ampmSel) ampmSel.value = ampm;
+      document.getElementById('inp-btime-hr').value = String(h).padStart(2, '0');
+      document.getElementById('inp-btime-min').value = parts[1];
+      document.getElementById('inp-btime-ampm').value = ampm;
+    }
+  }
+}
+
+function hydrateSavedData() {
+  renderProfiles();
+  const profiles = storage.getProfiles();
+  const activeId = storage.getActiveProfileId();
+  
+  if (activeId && profiles.some(p => p.id === activeId)) {
+    switchProfile(activeId);
+  } else {
+    // Attempt to load transient data or legacy data
+    const saved = storage.loadTransient();
+    if (saved) {
+      // Migrate legacy to "Me" profile if no profiles exist
+      if (profiles.length === 0) {
+         const p = { id: 'prof_' + Date.now(), name: 'Me', ...saved };
+         storage.saveProfiles([p]);
+         switchProfile(p.id);
+      } else {
+         populateFormFromData(saved);
+      }
     }
   }
 }
@@ -387,8 +501,8 @@ async function handleFormSubmit(e) {
     lon: parseFloat(document.getElementById('inp-place-lon').value)
   };
 
-  // Save birth details
-  storage.save({
+  // Save birth details transiently
+  storage.saveTransient({
     birth_place: payload.birth_place,
     birth_date:  payload.birth_date,
     birth_time:  payload.birth_time,

@@ -88,6 +88,13 @@
           <p class="home-subtitle">Enter your details to find the most aligned time for your activity.</p>
         </div>
 
+        <!-- Profiles Bar -->
+        <div class="profiles-scroll-wrap">
+          <div class="profiles-bar" id="profiles-bar">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
         <!-- Form -->
         <form id="home-form" class="form" novalidate>
 
@@ -139,6 +146,14 @@
               <input type="hidden" id="inp-btime" />
             </div>
             <span class="field-error" id="err-btime"></span>
+          </div>
+
+          <!-- Save Profile Action -->
+          <div class="save-profile-wrap" id="save-profile-wrap">
+            <button type="button" class="btn-save-profile" id="btn-save-profile">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save as new profile
+            </button>
           </div>
 
           <div class="field-group" id="fg-adate">

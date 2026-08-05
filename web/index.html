@@ -181,19 +181,12 @@
   ═══════════════════════════════════════════════════════ -->
   <div id="screen-loading" class="screen">
     <div class="loading-wrap">
-      <!-- SVG Arc Loader -->
-      <div class="arc-container">
-        <svg class="arc-svg" viewBox="0 0 80 80">
-          <defs>
-            <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#6366F1"/>
-              <stop offset="60%" stop-color="#818CF8"/>
-              <stop offset="100%" stop-color="#EEF2FF" stop-opacity="0.3"/>
-            </linearGradient>
-          </defs>
-          <circle cx="40" cy="40" r="32" class="arc-track"/>
-          <circle cx="40" cy="40" r="32" class="arc-fill" stroke="url(#arcGrad)"/>
-        </svg>
+      <!-- Astrological Loader -->
+      <div class="astro-loader">
+        <div class="sun"></div>
+        <div class="orbit orbit-1"><div class="planet planet-1"></div></div>
+        <div class="orbit orbit-2"><div class="planet planet-2"></div></div>
+        <div class="orbit orbit-3"><div class="planet planet-3"></div></div>
       </div>
 
       <p class="loading-app-name">StartRightDay</p>

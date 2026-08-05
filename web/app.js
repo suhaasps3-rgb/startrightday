@@ -131,7 +131,6 @@ function initHome() {
   const todayStr = formatDateISO(today);
   const ainput = document.getElementById('inp-adate');
   ainput.value = todayStr;
-  ainput.min = todayStr;
 
   // Birth date max = today
   document.getElementById('inp-bdate').max = todayStr;
@@ -182,6 +181,14 @@ function validate() {
   if (!bdate) { showError('bdate', 'Please select birth date'); ok = false; }
   if (!btime) { showError('btime', 'Please select birth time'); ok = false; }
   if (!adate) { showError('adate', 'Please select activity date'); ok = false; }
+  
+  if (bdate && adate) {
+    if (new Date(adate) < new Date(bdate)) {
+      showError('adate', 'Activity date cannot be before birth date');
+      ok = false;
+    }
+  }
+  
   return ok;
 }
 

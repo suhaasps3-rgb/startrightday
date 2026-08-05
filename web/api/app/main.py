@@ -129,3 +129,42 @@ async def recommend(request: RecommendationRequest) -> RecommendationResponse:
     result = await generate_recommendation(request)
     logger.info("Result: status=%s, intervals=%d", result.status, len(result.intervals))
     return result
+
+import sqlite3
+import os
+
+@app.get("/api/v1/places", tags=["Places"])
+async def search_places(q: str = "") -> list:
+    """
+    Search for Indian places.
+    """
+    q = q.strip().lower()
+    if not q or len(q) < 2:
+        return []
+    
+    db_path = os.path.join(os.path.dirname(__file__), "places.db")
+    if not os.path.exists(db_path):
+        return []
+
+    try:
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        # Search by prefix using index
+        # We limit to 10 results, ordered by population (pop) descending
+        query = "SELECT name, state, lat, lon FROM places WHERE name_lower LIKE ? ORDER BY pop DESC LIMIT 10"
+        c.execute(query, (f"{q}%",))
+        rows = c.fetchall()
+        conn.close()
+        
+        results = []
+        for r in rows:
+            results.append({
+                "name": r[0],
+                "state": r[1],
+                "lat": r[2],
+                "lon": r[3]
+            })
+        return results
+    except Exception as e:
+        logger.error(f"Error querying places DB: {e}")
+        return []

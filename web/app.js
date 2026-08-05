@@ -212,9 +212,64 @@ function populateTimeDropdowns() {
   ampmSel.addEventListener('change', updateHiddenTime);
 }
 
+function initAutocomplete() {
+  const input = document.getElementById('inp-place');
+  const dropdown = document.getElementById('place-dropdown');
+  const latInput = document.getElementById('inp-place-lat');
+  const lonInput = document.getElementById('inp-place-lon');
+  let timeout = null;
+
+  input.addEventListener('input', (e) => {
+    latInput.value = '';
+    lonInput.value = '';
+    const val = e.target.value.trim();
+    if (val.length < 2) {
+      dropdown.classList.add('hidden');
+      return;
+    }
+
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(async () => {
+      try {
+        const resp = await fetch(`${CONFIG.API_URL}/api/v1/places?q=${encodeURIComponent(val)}`);
+        const places = await resp.json();
+        
+        if (places.length > 0) {
+          dropdown.innerHTML = '';
+          places.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'autocomplete-item';
+            const stateText = p.state ? `<span class="ac-state">${p.state}</span>` : '';
+            div.innerHTML = `${p.name}${stateText}`;
+            div.addEventListener('click', () => {
+              input.value = p.name + (p.state ? `, ${p.state}` : '');
+              latInput.value = p.lat;
+              lonInput.value = p.lon;
+              dropdown.classList.add('hidden');
+            });
+            dropdown.appendChild(div);
+          });
+          dropdown.classList.remove('hidden');
+        } else {
+          dropdown.classList.add('hidden');
+        }
+      } catch (err) {
+        console.error('Autocomplete error:', err);
+      }
+    }, 300);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+}
+
 function initHome() {
   populateDateDropdowns();
   populateTimeDropdowns();
+  initAutocomplete();
   
   // Set activity date default to today
   const today = new Date();
@@ -229,6 +284,10 @@ function hydrateSavedData() {
   const saved = storage.load();
   if (!saved) return;
   document.getElementById('inp-place').value = saved.birth_place || '';
+  if (saved.lat && saved.lon) {
+    document.getElementById('inp-place-lat').value = saved.lat;
+    document.getElementById('inp-place-lon').value = saved.lon;
+  }
   
   if (saved.birth_date) {
     document.getElementById('inp-bdate').value = saved.birth_date;
@@ -294,11 +353,13 @@ function validate() {
   clearErrors();
   let ok = true;
   const place = document.getElementById('inp-place').value.trim();
+  const lat = document.getElementById('inp-place-lat').value;
   const bdate = document.getElementById('inp-bdate').value;
   const btime = document.getElementById('inp-btime').value;
   const adate = document.getElementById('inp-adate').value;
 
   if (!place) { showError('place', 'Please enter a birth place'); ok = false; }
+  else if (!lat) { showError('place', 'Please select a place from the dropdown'); ok = false; }
   if (!bdate) { showError('bdate', 'Please select birth date'); ok = false; }
   if (!btime) { showError('btime', 'Please select birth time'); ok = false; }
   if (!adate) { showError('adate', 'Please select activity date'); ok = false; }
@@ -322,6 +383,8 @@ async function handleFormSubmit(e) {
     birth_date:  document.getElementById('inp-bdate').value,
     birth_time:  document.getElementById('inp-btime').value,
     activity_date: document.getElementById('inp-adate').value,
+    lat: parseFloat(document.getElementById('inp-place-lat').value),
+    lon: parseFloat(document.getElementById('inp-place-lon').value)
   };
 
   // Save birth details
@@ -329,6 +392,8 @@ async function handleFormSubmit(e) {
     birth_place: payload.birth_place,
     birth_date:  payload.birth_date,
     birth_time:  payload.birth_time,
+    lat: payload.lat,
+    lon: payload.lon
   });
 
   // Navigate to loading

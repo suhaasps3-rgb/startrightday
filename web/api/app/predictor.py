@@ -64,9 +64,21 @@ async def generate_recommendation(
     """
 
     # ------------------------------------------------------------------
-    # Step 1: Geocode birth place
+    # Step 1: Geocode birth place or use provided coordinates
     # ------------------------------------------------------------------
-    geo = await geocode_place(request.birth_place)
+    if request.lat is not None and request.lon is not None:
+        # If coordinates are provided (via autocomplete), we bypass the slow geocoding API
+        # Since our autocomplete DB only contains Indian places, timezone is always IST
+        from app.models import GeoLocation
+        geo = GeoLocation(
+            place_name=request.birth_place,
+            latitude=request.lat,
+            longitude=request.lon,
+            timezone="Asia/Kolkata"
+        )
+    else:
+        geo = await geocode_place(request.birth_place)
+        
     tz = pytz.timezone(geo.timezone)
 
     # ------------------------------------------------------------------

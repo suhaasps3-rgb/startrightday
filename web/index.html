@@ -93,11 +93,14 @@
 
           <div class="field-group" id="fg-place">
             <label class="field-label" for="inp-place">Birth Place</label>
-            <div class="input-wrap">
+            <div class="input-wrap autocomplete-wrap">
               <span class="input-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </span>
-              <input type="text" id="inp-place" class="field-input" placeholder="e.g. Mumbai, India" autocomplete="off" />
+              <input type="text" id="inp-place" class="field-input" placeholder="e.g. Mumbai" autocomplete="off" />
+              <input type="hidden" id="inp-place-lat" />
+              <input type="hidden" id="inp-place-lon" />
+              <div class="autocomplete-dropdown hidden" id="place-dropdown"></div>
             </div>
             <span class="field-error" id="err-place"></span>
           </div>

@@ -41,6 +41,14 @@ class RecommendationRequest(BaseModel):
         ...,
         description="Date for which to find auspicious intervals (YYYY-MM-DD)",
     )
+    lat: Optional[float] = Field(
+        default=None,
+        description="Latitude of the birth place (optional if geocoding fallback is used)",
+    )
+    lon: Optional[float] = Field(
+        default=None,
+        description="Longitude of the birth place (optional if geocoding fallback is used)",
+    )
 
     @field_validator("birth_place")
     @classmethod

@@ -10,8 +10,8 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #F8FAFC;
-  color: #0F172A;
+  background: var(--bg);
+  color: var(--text-primary);
   min-height: 100dvh;
   overflow: hidden;
 }
@@ -43,6 +43,23 @@ a { text-decoration: none; color: inherit; }
   --shadow-btn:  0 8px 24px rgba(99,102,241,.38);
   --r-sm: 8px;  --r-md: 12px;  --r-lg: 16px;  --r-xl: 24px;  --r-full: 9999px;
   --max-w: 460px;
+}
+
+/* ── Dark Mode ────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:              #0F172A;
+  --surface:         #1E293B;
+  --surface-gray:    #0B1120;
+  --border:          #334155;
+  --text-primary:    #F8FAFC;
+  --text-secondary:  #94A3B8;
+  --text-tertiary:   #64748B;
+  --accent-surface:  #1e1b4b;
+  --success-surface: #064e3b;
+  --success-text:    #34d399;
+  --warning-surface: #451a03;
+  --warning-text:    #fbbf24;
+  --shadow-card: 0 4px 16px rgba(0,0,0,.3), 0 1px 4px rgba(0,0,0,.2);
 }
 
 /* ── App Shell ────────────────────────────────────────────── */
@@ -276,16 +293,60 @@ a { text-decoration: none; color: inherit; }
   gap: 32px;
 }
 
-.home-header { display: flex; flex-direction: column; gap: 12px; }
+/* ── Header ──────────────────────────────────────────────── */
+.home-header { padding: 48px 24px 24px; }
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
 
 .home-badge {
-  display: inline-flex;
-  padding: 4px 12px;
-  background: var(--accent-surface);
-  color: var(--accent);
+  display: inline-flex; align-items: center;
+  background: var(--accent-surface); color: var(--accent);
+  padding: 4px 8px; border-radius: var(--r-sm);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   border-radius: var(--r-full);
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.8px;
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  transition: all 200ms;
+  position: relative;
+}
+
+.theme-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--text-tertiary);
+}
+
+.theme-toggle svg {
+  position: absolute;
+  transition: transform 300ms cubic-bezier(.4,0,.2,1), opacity 300ms;
+}
+
+html[data-theme="light"] .icon-sun, html[data-theme="dark"] .icon-moon {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+html[data-theme="light"] .icon-moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0);
+}
+
+html[data-theme="dark"] .icon-sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0);
 }
 
 .home-title {

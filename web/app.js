@@ -862,8 +862,31 @@ function injectCelestialBg(screenId) {
   screen.insertBefore(bg, screen.firstChild);
 }
 
+function initTheme() {
+  const toggleBtn = document.getElementById('theme-toggle');
+  if (!toggleBtn) return;
+  
+  let currentTheme = localStorage.getItem('srd_theme');
+  if (!currentTheme) {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      currentTheme = 'dark';
+    } else {
+      currentTheme = 'light';
+    }
+  }
+  
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  
+  toggleBtn.addEventListener('click', () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    localStorage.setItem('srd_theme', currentTheme);
+  });
+}
+
 // ─── Init ────────────────────────────────────────────────────────────────────
 function init() {
+  initTheme();
   injectCelestialBg('screen-home');
   injectCelestialBg('screen-result');
   initOnboarding();

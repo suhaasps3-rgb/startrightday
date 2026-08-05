@@ -125,15 +125,61 @@ function finishOnboarding() {
 }
 
 // ─── Home ────────────────────────────────────────────────────────────────────
+function populateDateDropdowns() {
+  const daySel = document.getElementById('inp-bdate-day');
+  const monthSel = document.getElementById('inp-bdate-month');
+  const yearSel = document.getElementById('inp-bdate-year');
+  const hidden = document.getElementById('inp-bdate');
+  if (!daySel || !monthSel || !yearSel || !hidden) return;
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  for (let i = 1; i <= 31; i++) {
+    const opt = document.createElement('option');
+    opt.value = String(i).padStart(2, '0');
+    opt.textContent = i;
+    daySel.appendChild(opt);
+  }
+
+  months.forEach((m, i) => {
+    const opt = document.createElement('option');
+    opt.value = String(i + 1).padStart(2, '0');
+    opt.textContent = m;
+    monthSel.appendChild(opt);
+  });
+
+  const currentYear = new Date().getFullYear();
+  for (let i = currentYear; i >= currentYear - 100; i--) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i;
+    yearSel.appendChild(opt);
+  }
+
+  const updateHiddenDate = () => {
+    const y = yearSel.value;
+    const m = monthSel.value;
+    const d = daySel.value;
+    if (y && m && d) {
+      hidden.value = `${y}-${m}-${d}`;
+    } else {
+      hidden.value = '';
+    }
+  };
+
+  daySel.addEventListener('change', updateHiddenDate);
+  monthSel.addEventListener('change', updateHiddenDate);
+  yearSel.addEventListener('change', updateHiddenDate);
+}
+
 function initHome() {
+  populateDateDropdowns();
+  
   // Set activity date default to today
   const today = new Date();
   const todayStr = formatDateISO(today);
   const ainput = document.getElementById('inp-adate');
   ainput.value = todayStr;
-
-  // Birth date max = today
-  document.getElementById('inp-bdate').max = todayStr;
 
   document.getElementById('home-form').addEventListener('submit', handleFormSubmit);
 }
@@ -142,7 +188,21 @@ function hydrateSavedData() {
   const saved = storage.load();
   if (!saved) return;
   document.getElementById('inp-place').value = saved.birth_place || '';
-  document.getElementById('inp-bdate').value = saved.birth_date || '';
+  
+  if (saved.birth_date) {
+    document.getElementById('inp-bdate').value = saved.birth_date;
+    const parts = saved.birth_date.split('-');
+    if (parts.length === 3) {
+      const yearSel = document.getElementById('inp-bdate-year');
+      const monthSel = document.getElementById('inp-bdate-month');
+      const daySel = document.getElementById('inp-bdate-day');
+      
+      if (yearSel) yearSel.value = parts[0];
+      if (monthSel) monthSel.value = parts[1];
+      if (daySel) daySel.value = parts[2];
+    }
+  }
+  
   document.getElementById('inp-btime').value = saved.birth_time || '';
 }
 

@@ -104,11 +104,16 @@
 
           <div class="field-group" id="fg-bdate">
             <label class="field-label" for="inp-bdate">Birth Date</label>
-            <div class="input-wrap">
+            <div class="input-wrap input-wrap--date-dropdowns">
               <span class="input-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </span>
-              <input type="date" id="inp-bdate" class="field-input field-input--date" />
+              <div class="date-dropdowns">
+                <select id="inp-bdate-day" class="field-input dropdown-select"><option value="">Day</option></select>
+                <select id="inp-bdate-month" class="field-input dropdown-select"><option value="">Month</option></select>
+                <select id="inp-bdate-year" class="field-input dropdown-select"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="inp-bdate" />
             </div>
             <span class="field-error" id="err-bdate"></span>
           </div>

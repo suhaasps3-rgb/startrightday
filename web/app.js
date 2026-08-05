@@ -793,8 +793,47 @@ function initResultScreen() {
   document.getElementById('result-retry').addEventListener('click', () => goTo('home'));
 }
 
+function injectCelestialBg(screenId) {
+  const screen = document.getElementById(screenId);
+  if (!screen) return;
+  const bg = document.createElement('div');
+  bg.className = 'celestial-bg';
+  
+  // Stars
+  for (let i = 0; i < 15; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = star.style.height = `${Math.random() * 3 + 2}px`;
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+    star.style.animationDelay = `${Math.random() * 2}s`;
+    bg.appendChild(star);
+  }
+
+  // Shapes
+  for (let i = 0; i < 4; i++) {
+    const shape = document.createElement('div');
+    shape.className = 'star-shape';
+    const size = Math.random() * 20 + 15;
+    shape.style.width = shape.style.height = `${size}px`;
+    shape.style.left = `${Math.random() * 100}%`;
+    shape.style.top = `${Math.random() * 100}%`;
+    shape.style.setProperty('--duration', `${Math.random() * 4 + 4}s`);
+    bg.appendChild(shape);
+  }
+
+  const moon = document.createElement('div');
+  moon.className = 'moon-shape';
+  bg.appendChild(moon);
+
+  screen.insertBefore(bg, screen.firstChild);
+}
+
 // ─── Init ────────────────────────────────────────────────────────────────────
 function init() {
+  injectCelestialBg('screen-home');
+  injectCelestialBg('screen-result');
   initOnboarding();
   initHome();
   initResultScreen();

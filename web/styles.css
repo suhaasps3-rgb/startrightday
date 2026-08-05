@@ -212,7 +212,55 @@ a { text-decoration: none; color: inherit; }
    ║  HOME                                                 ║
    ╚═══════════════════════════════════════════════════════╝ */
 
+/* ── Celestial Background ────────────────────────────────── */
+.celestial-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.15;
+  animation: twinkle var(--duration) ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.05; transform: scale(0.8); }
+  100% { opacity: 0.3; transform: scale(1.2); }
+}
+
+.star-shape {
+  position: absolute;
+  background: var(--warning); 
+  opacity: 0.15;
+  clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
+  animation: float var(--duration) ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-30px) rotate(25deg); }
+}
+
+.moon-shape {
+  position: absolute;
+  top: 10%;
+  right: -20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  box-shadow: inset 15px 0 0 0 rgba(99, 102, 241, 0.05);
+  animation: float 10s ease-in-out infinite alternate;
+}
+
 .home-wrap {
+  position: relative;
+  z-index: 1;
   max-width: var(--max-w);
   margin: 0 auto;
   min-height: 100dvh;
@@ -542,6 +590,8 @@ a { text-decoration: none; color: inherit; }
    ╚═══════════════════════════════════════════════════════╝ */
 
 .result-wrap {
+  position: relative;
+  z-index: 1;
   max-width: var(--max-w);
   margin: 0 auto;
   padding: 0 20px 48px;

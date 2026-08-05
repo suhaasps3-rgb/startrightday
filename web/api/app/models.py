@@ -29,13 +29,17 @@ class RecommendationRequest(BaseModel):
         max_length=100,
         description="City or town name of birth place (e.g., 'Mumbai', 'New Delhi')",
     )
-    birth_date: date = Field(
-        ...,
+    birth_date: Optional[date] = Field(
+        default=None,
         description="Date of birth in ISO format (YYYY-MM-DD)",
     )
-    birth_time: time = Field(
-        ...,
+    birth_time: Optional[time] = Field(
+        default=None,
         description="Time of birth in HH:MM (24-hour format)",
+    )
+    known_nakshatra: Optional[str] = Field(
+        default=None,
+        description="Optional pre-known birth nakshatra to skip birth panchang calculation",
     )
     activity_date: date = Field(
         ...,

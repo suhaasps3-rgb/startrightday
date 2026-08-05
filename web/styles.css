@@ -251,8 +251,34 @@ a { text-decoration: none; color: inherit; }
   font-size: 15px; color: var(--text-secondary); line-height: 1.6;
 }
 
-/* ── Form ────────────────────────────────────────────────── */
+/* ── Form Inputs ─────────────────────────────────────────── */
 .form { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Mode Toggle ─────────────────────────────────────────── */
+.mode-toggle {
+  display: flex;
+  background: var(--surface-gray);
+  border-radius: var(--r-md);
+  padding: 4px;
+  margin-bottom: 4px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: var(--r-sm);
+  transition: all 200ms;
+}
+
+.mode-btn.active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
 
 .field-group { display: flex; flex-direction: column; gap: 6px; }
 

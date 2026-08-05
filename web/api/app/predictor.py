@@ -81,18 +81,26 @@ async def generate_recommendation(
         
     tz = pytz.timezone(geo.timezone)
 
-    # ------------------------------------------------------------------
-    # Step 2: Compute birth Nakshatra
-    # ------------------------------------------------------------------
-    birth_dt_naive = datetime.combine(request.birth_date, request.birth_time)
-    birth_dt_aware = tz.localize(birth_dt_naive)
-    birth_jd = datetime_to_jd(birth_dt_aware)
-    birth_moon_lon = get_moon_longitude(birth_jd)
-    birth_nakshatra_idx = compute_nakshatra_index(birth_moon_lon)
-
     # Import here to avoid circular dependency
     from app.constants import NAKSHATRA_NAMES
-    birth_nakshatra_name = NAKSHATRA_NAMES[birth_nakshatra_idx]
+
+    # ------------------------------------------------------------------
+    # Step 2: Compute birth Nakshatra (or use known)
+    # ------------------------------------------------------------------
+    if request.known_nakshatra:
+        birth_nakshatra_name = request.known_nakshatra
+        try:
+            birth_nakshatra_idx = NAKSHATRA_NAMES.index(birth_nakshatra_name)
+        except ValueError:
+            birth_nakshatra_idx = 0
+            birth_nakshatra_name = NAKSHATRA_NAMES[0]
+    else:
+        birth_dt_naive = datetime.combine(request.birth_date, request.birth_time)
+        birth_dt_aware = tz.localize(birth_dt_naive)
+        birth_jd = datetime_to_jd(birth_dt_aware)
+        birth_moon_lon = get_moon_longitude(birth_jd)
+        birth_nakshatra_idx = compute_nakshatra_index(birth_moon_lon)
+        birth_nakshatra_name = NAKSHATRA_NAMES[birth_nakshatra_idx]
 
     # ------------------------------------------------------------------
     # Step 3: Compute day boundaries for activity date

@@ -28,6 +28,7 @@ const state = {
   loadingTimer: null,
   msgTimer: null,
   msgIndex: 0,
+  mode: 'calc', // 'calc' or 'known'
 };
 
 // ─── Storage ────────────────────────────────────────────────────────────────
@@ -284,10 +285,91 @@ function initAutocomplete() {
   });
 }
 
+const NAKSHATRAS = [
+  "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra",
+  "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni",
+  "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha",
+  "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha",
+  "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+];
+
+function populateNakshatras() {
+  const sel = document.getElementById('inp-nakshatra');
+  if (!sel) return;
+  NAKSHATRAS.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n;
+    sel.appendChild(opt);
+  });
+}
+
+function initModeToggle() {
+  const btnCalc = document.getElementById('mode-calc');
+  const btnKnown = document.getElementById('mode-known');
+  const fgPlaceLabel = document.getElementById('label-place');
+  const fgNakshatra = document.getElementById('fg-nakshatra');
+  const fgBdate = document.getElementById('fg-bdate');
+  const fgBtime = document.getElementById('fg-btime');
+  const saveWrap = document.getElementById('save-profile-wrap');
+
+  if (!btnCalc || !btnKnown) return;
+
+  btnCalc.addEventListener('click', () => {
+    btnCalc.classList.add('active');
+    btnKnown.classList.remove('active');
+    
+    if (fgPlaceLabel) fgPlaceLabel.textContent = 'Birth Place';
+    if (fgNakshatra) {
+      fgNakshatra.classList.add('hidden');
+      fgNakshatra.style.display = 'none';
+    }
+    
+    if (fgBdate) {
+      fgBdate.classList.remove('hidden');
+      fgBdate.style.display = 'flex';
+    }
+    if (fgBtime) {
+      fgBtime.classList.remove('hidden');
+      fgBtime.style.display = 'flex';
+    }
+    
+    if (saveWrap) saveWrap.style.display = 'flex';
+    
+    state.mode = 'calc';
+  });
+
+  btnKnown.addEventListener('click', () => {
+    btnKnown.classList.add('active');
+    btnCalc.classList.remove('active');
+    
+    if (fgPlaceLabel) fgPlaceLabel.textContent = 'Current Location';
+    if (fgNakshatra) {
+      fgNakshatra.classList.remove('hidden');
+      fgNakshatra.style.display = 'flex';
+    }
+    
+    if (fgBdate) {
+      fgBdate.classList.add('hidden');
+      fgBdate.style.display = 'none';
+    }
+    if (fgBtime) {
+      fgBtime.classList.add('hidden');
+      fgBtime.style.display = 'none';
+    }
+    
+    if (saveWrap) saveWrap.style.display = 'none';
+    
+    state.mode = 'known';
+  });
+}
+
 function initHome() {
   populateDateDropdowns();
   populateTimeDropdowns();
+  populateNakshatras();
   initAutocomplete();
+  initModeToggle();
   
   // Set activity date default to today
   const today = new Date();
@@ -448,7 +530,7 @@ function formatDateISO(d) {
 }
 
 function clearErrors() {
-  ['place', 'bdate', 'btime', 'adate'].forEach(k => {
+  ['place', 'bdate', 'btime', 'adate', 'nakshatra'].forEach(k => {
     const fg = document.getElementById(`fg-${k}`);
     const err = document.getElementById(`err-${k}`);
     if (fg) fg.classList.remove('has-error');
@@ -471,14 +553,21 @@ function validate() {
   const bdate = document.getElementById('inp-bdate').value;
   const btime = document.getElementById('inp-btime').value;
   const adate = document.getElementById('inp-adate').value;
+  const nakshatra = document.getElementById('inp-nakshatra').value;
 
-  if (!place) { showError('place', 'Please enter a birth place'); ok = false; }
+  if (!place) { showError('place', 'Please enter a location'); ok = false; }
   else if (!lat) { showError('place', 'Please select a place from the dropdown'); ok = false; }
-  if (!bdate) { showError('bdate', 'Please select birth date'); ok = false; }
-  if (!btime) { showError('btime', 'Please select birth time'); ok = false; }
+  
+  if (state.mode !== 'known') {
+    if (!bdate) { showError('bdate', 'Please select birth date'); ok = false; }
+    if (!btime) { showError('btime', 'Please select birth time'); ok = false; }
+  } else {
+    if (!nakshatra) { showError('nakshatra', 'Please select your birth star'); ok = false; }
+  }
+  
   if (!adate) { showError('adate', 'Please select activity date'); ok = false; }
   
-  if (bdate && adate) {
+  if (state.mode !== 'known' && bdate && adate) {
     if (new Date(adate) < new Date(bdate)) {
       showError('adate', 'Activity date cannot be before birth date');
       ok = false;
@@ -494,12 +583,17 @@ async function handleFormSubmit(e) {
 
   const payload = {
     birth_place: document.getElementById('inp-place').value.trim(),
-    birth_date:  document.getElementById('inp-bdate').value,
-    birth_time:  document.getElementById('inp-btime').value,
     activity_date: document.getElementById('inp-adate').value,
     lat: parseFloat(document.getElementById('inp-place-lat').value),
     lon: parseFloat(document.getElementById('inp-place-lon').value)
   };
+  
+  if (state.mode !== 'known') {
+    payload.birth_date = document.getElementById('inp-bdate').value;
+    payload.birth_time = document.getElementById('inp-btime').value;
+  } else {
+    payload.known_nakshatra = document.getElementById('inp-nakshatra').value;
+  }
 
   // Save birth details transiently
   storage.saveTransient({

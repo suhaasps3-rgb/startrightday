@@ -98,8 +98,13 @@
         <!-- Form -->
         <form id="home-form" class="form" novalidate>
 
+          <div class="mode-toggle">
+            <button type="button" class="mode-btn active" id="mode-calc">Calculate Birth Star</button>
+            <button type="button" class="mode-btn" id="mode-known">I Know My Star</button>
+          </div>
+
           <div class="field-group" id="fg-place">
-            <label class="field-label" for="inp-place">Birth Place</label>
+            <label class="field-label" id="label-place" for="inp-place">Birth Place</label>
             <div class="input-wrap autocomplete-wrap">
               <span class="input-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -110,6 +115,16 @@
               <div class="autocomplete-dropdown hidden" id="place-dropdown"></div>
             </div>
             <span class="field-error" id="err-place"></span>
+          </div>
+
+          <div class="field-group hidden" id="fg-nakshatra" style="display: none;">
+            <label class="field-label" for="inp-nakshatra">Birth Star (Nakshatra)</label>
+            <div class="input-wrap input-wrap--date-dropdowns">
+              <select id="inp-nakshatra" class="field-input dropdown-select">
+                <option value="">Select your Nakshatra</option>
+              </select>
+            </div>
+            <span class="field-error" id="err-nakshatra"></span>
           </div>
 
           <div class="field-group" id="fg-bdate">

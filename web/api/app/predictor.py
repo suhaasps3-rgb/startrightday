@@ -121,10 +121,19 @@ async def generate_recommendation(
         for slot in slots:
             all_reasons.extend(slot.rejection_reasons)
             
-        message = "No auspicious time found today. Consider choosing a different date."
         if all_reasons:
-            common_reason = Counter(all_reasons).most_common(1)[0][0]
-            message = f"Day is mostly restricted by {common_reason}. Consider choosing a different date."
+            counts = Counter(all_reasons)
+            top_reasons = counts.most_common(2)
+            
+            reason_bullets = " and ".join([f"{r[0]}" for r in top_reasons])
+            message = (
+                f"The day is heavily restricted by {reason_bullets}. "
+                "In Vedic astrology, even if your Nakshatra is highly auspicious, "
+                "all cosmic elements must be favorable simultaneously. "
+                "We recommend choosing a different date to ensure success."
+            )
+        else:
+            message = "No auspicious time found today. Consider choosing a different date."
 
         return RecommendationResponse(
             status="avoid",

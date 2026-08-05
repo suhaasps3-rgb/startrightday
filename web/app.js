@@ -289,6 +289,8 @@ function renderResult(data) {
     });
   } else {
     emptyState.classList.remove('hidden');
+    emptyState.querySelector('.empty-icon').textContent = '🌙';
+    emptyState.querySelector('.empty-title').textContent = 'No Auspicious Time Found';
     document.getElementById('empty-body').textContent =
       data.message || 'No auspicious time found today. Consider choosing a different date.';
   }

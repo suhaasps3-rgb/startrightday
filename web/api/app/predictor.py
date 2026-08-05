@@ -116,10 +116,20 @@ async def generate_recommendation(
     # Step 7 + 8: Build response
     # ------------------------------------------------------------------
     if not intervals:
+        from collections import Counter
+        all_reasons = []
+        for slot in slots:
+            all_reasons.extend(slot.rejection_reasons)
+            
+        message = "No auspicious time found today. Consider choosing a different date."
+        if all_reasons:
+            common_reason = Counter(all_reasons).most_common(1)[0][0]
+            message = f"Day is mostly restricted by {common_reason}. Consider choosing a different date."
+
         return RecommendationResponse(
             status="avoid",
             intervals=[],
-            message="No auspicious time found today. Consider choosing a different date.",
+            message=message,
             birth_nakshatra=birth_nakshatra_name,
             activity_date_display=request.activity_date.strftime("%A, %d %B %Y"),
         )
